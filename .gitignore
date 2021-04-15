@@ -3,5 +3,7 @@
 *.out
 *.hex
 *.mif
+ext_mem.dat
+hello
 file_i/*
 file_o/*
