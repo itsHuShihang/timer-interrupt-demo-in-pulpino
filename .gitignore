@@ -1,6 +1,7 @@
 *.o
 *.elf
-*.a
 *.out
 *.hex
 *.mif
+file_i/*
+file_o/*
