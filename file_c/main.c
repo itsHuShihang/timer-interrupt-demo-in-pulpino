@@ -201,30 +201,37 @@ void ISR_SRAM (void)
 	}
 }*/
 
-#include "stdlib.h"
-#include "gpio.h"
-// #include "uart.h"
+// #include "stdlib.h"
+// #include "gpio.h"
+// // #include "uart.h"
 
-void main()
+// void main()
+// {
+	
+// 	for(int i = 0; i < 8; i++)
+// 	{
+// 		set_gpio_pin_direction(i, 1);
+// 		set_gpio_pin_value(i, 1);
+// 	}
+
+// 	//uart_set_cfg(0, 77);  //Core clock 12MHz, baud rate 9600 bps
+	
+// 	unsigned int j = 0;
+	
+// 	while(1)
+// 	{
+// 		set_gpio_pin_value((j - 1) & 0x07, 1);
+// 		set_gpio_pin_value(j & 0x07, 0);
+// 		for(int i = 0; i < 1000000; ++i);
+// 		j++;
+// 	}
+	
+	
+// }
+
+// Hu Shihang's main function
+int main()
 {
-	
-	for(int i = 0; i < 8; i++)
-	{
-		set_gpio_pin_direction(i, 1);
-		set_gpio_pin_value(i, 1);
-	}
-
-	//uart_set_cfg(0, 77);  //Core clock 12MHz, baud rate 9600 bps
-	
-	unsigned int j = 0;
-	
-	while(1)
-	{
-		set_gpio_pin_value((j - 1) & 0x07, 1);
-		set_gpio_pin_value(j & 0x07, 0);
-		for(int i = 0; i < 1000000; ++i);
-		j++;
-	}
-	
-	
+	int i = 0;
+	return 0;
 }
