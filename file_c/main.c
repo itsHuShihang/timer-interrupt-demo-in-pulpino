@@ -11,8 +11,6 @@ int led_num = 0;
 void ISR_TA_OVF(void)
 {
     ICP = (1 << 28); // clear pending interrupt of the 28th bit
-    printf("led_number is %d",led_num);
-    printf("time is %d",get_time());
     if (led_num < LED_TOTAL)
     {
         led_num++;
@@ -25,7 +23,7 @@ void ISR_TA_OVF(void)
 
 int main()
 {
-    // close all leds
+    // turn off all leds
     for (int i = 0; i < LED_TOTAL; i++)
     {
         set_gpio_pin_direction(i, 1);
@@ -33,6 +31,7 @@ int main()
     }
 
     int_enable(); // enable interrupt
+    reset_timer();
     start_timer(); // start timer
 
     while (1)
