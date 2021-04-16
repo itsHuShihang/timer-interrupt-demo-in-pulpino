@@ -1,4 +1,4 @@
-#include "stdlib.h"
+#include "stdio.h"
 #include "gpio.h"
 #include "timer.h"
 #include "event.h"
@@ -11,8 +11,8 @@ int led_num = 0;
 void ISR_TA_OVF(void)
 {
     ICP = (1 << 28); // clear pending interrupt of the 28th bit
-    printf(led_num);
-    printf(get_time());
+    printf("led_number is %d",led_num);
+    printf("time is %d",get_time());
     if (led_num < LED_TOTAL)
     {
         led_num++;
