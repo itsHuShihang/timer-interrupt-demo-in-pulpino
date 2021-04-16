@@ -4,13 +4,13 @@
 #include "event.h"
 #include "int.h"
 
-#define LED_TOTAL 8
+#define LED_TOTAL 5
 
 int led_num = 0;
 
-void ISR_TA_OVF(void)
+void ISR_TA_CMP(void)
 {
-    ICP = (1 << 28); // clear pending interrupt of the 28th bit
+    ICP = (1 << 29); // clear pending interrupt of the 28th bit
     if (led_num < LED_TOTAL)
     {
         led_num++;
@@ -23,6 +23,7 @@ void ISR_TA_OVF(void)
 
 int main()
 {
+    int count = 0;
     // turn off all leds
     for (int i = 0; i < LED_TOTAL; i++)
     {
@@ -30,13 +31,15 @@ int main()
         set_gpio_pin_value(i, 0);
     }
 
+    TOCRA = 0x80;
     int_enable(); // enable interrupt
     reset_timer();
     start_timer(); // start timer
 
-    while (1)
+    while (count < LED_TOTAL)
     {
         set_gpio_pin_value(led_num, 1);
+        count++;
         sleep();
     }
 
