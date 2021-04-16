@@ -4,14 +4,14 @@
 #include "event.h"
 #include "int.h"
 
-#define LED_TOTAL = 5
+#define LED_TOTAL 5
 
 int led_num = 0;
 
 void ISR_TA_OVF(void)
 {
     ICP = (1 << 28); // clear pending interrupt of the 28th bit
-    if (led_num<=LED_TOTAL)
+    if (led_num < LED_TOTAL)
     {
         led_num++;
     }
@@ -28,7 +28,6 @@ int main()
     {
         set_gpio_pin_value(i, 0);
     }
-    
 
     // configure ISRs
     int_enable(); // enable interrupt
@@ -38,7 +37,7 @@ int main()
 
     // setup timer A
     TOCRA = 0x80; // set the compare value of timer A
-    TPRA = 0x3F; // prescaler value = 111 and enable timer
+    TPRA = 0x3F;  // prescaler value = 111 and enable timer
 
     while (1)
     {
