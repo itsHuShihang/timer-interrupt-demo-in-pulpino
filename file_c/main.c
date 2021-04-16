@@ -4,7 +4,7 @@
 #include "event.h"
 #include "int.h"
 
-#define LED_TOTAL 5
+#define LED_TOTAL 8
 
 int led_num = 0;
 
@@ -26,6 +26,7 @@ int main()
     // close all leds
     for (int i = 0; i < LED_TOTAL; i++)
     {
+        set_gpio_pin_direction(i, 1);
         set_gpio_pin_value(i, 0);
     }
 
