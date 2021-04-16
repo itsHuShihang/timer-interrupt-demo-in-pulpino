@@ -11,6 +11,8 @@ int led_num = 0;
 void ISR_TA_OVF(void)
 {
     ICP = (1 << 28); // clear pending interrupt of the 28th bit
+    printf(led_num);
+    printf(get_time());
     if (led_num < LED_TOTAL)
     {
         led_num++;
@@ -30,15 +32,8 @@ int main()
         set_gpio_pin_value(i, 0);
     }
 
-    // configure ISRs
     int_enable(); // enable interrupt
-
-    EER = 0xF0000000; // enable all events about timer
-    IER = 0xf0000000; // enable all interrupts about timer
-
-    // setup timer A
-    TOCRA = 0x80; // set the compare value of timer A
-    TPRA = 0x3F;  // prescaler value = 111 and enable timer
+    start_timer(); // start timer
 
     while (1)
     {
@@ -47,5 +42,6 @@ int main()
     }
 
     int_disable();
+    stop_timer();
     return 0;
 }
