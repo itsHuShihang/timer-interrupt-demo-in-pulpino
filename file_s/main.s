@@ -5,58 +5,6 @@
 	.attribute stack_align, 16
 	.text
 	.align	1
-	.type	sleep, @function
-sleep:
-	addi	sp,sp,-16
-	sw	s0,12(sp)
-	addi	s0,sp,16
-	li	a5,437272576
-	addi	a5,a5,32
-	li	a4,1
-	sw	a4,0(a5)
- #APP
-# 70 "./file_c/utils.h" 1
-	nop;nop;wfi
-# 0 "" 2
- #NO_APP
-	nop
-	lw	s0,12(sp)
-	addi	sp,sp,16
-	jr	ra
-	.size	sleep, .-sleep
-	.align	1
-	.type	int_disable, @function
-int_disable:
-	addi	sp,sp,-32
-	sw	s0,28(sp)
-	addi	s0,sp,32
- #APP
-# 49 "./file_c/int.h" 1
-	csrr a5, mstatus
-# 0 "" 2
- #NO_APP
-	sw	a5,-20(s0)
-	lw	a5,-20(s0)
-	andi	a5,a5,-9
-	sw	a5,-20(s0)
-	lw	a5,-20(s0)
- #APP
-# 51 "./file_c/int.h" 1
-	csrw mstatus, a5
-# 0 "" 2
- #NO_APP
-	li	a5,0
- #APP
-# 52 "./file_c/int.h" 1
-	csrw 0x300, a5
-# 0 "" 2
- #NO_APP
-	nop
-	lw	s0,28(sp)
-	addi	sp,sp,32
-	jr	ra
-	.size	int_disable, .-int_disable
-	.align	1
 	.type	int_enable, @function
 int_enable:
 	addi	sp,sp,-32
@@ -83,43 +31,111 @@ int_enable:
 	jr	ra
 	.size	int_enable, .-int_enable
 	.globl	led_num
-	.section	.sbss,"aw",@nobits
+	.section	.sdata,"aw"
 	.align	2
 	.type	led_num, @object
 	.size	led_num, 4
 led_num:
-	.zero	4
+	.word	2
 	.text
 	.align	1
-	.globl	ISR_TA_CMP
-	.type	ISR_TA_CMP, @function
-ISR_TA_CMP:
+	.globl	configure
+	.type	configure, @function
+configure:
 	addi	sp,sp,-16
-	sw	s0,12(sp)
+	sw	ra,12(sp)
+	sw	s0,8(sp)
 	addi	s0,sp,16
 	li	a5,437272576
-	addi	a5,a5,12
-	li	a4,536870912
+	addi	a5,a5,28
+	li	a4,-1
 	sw	a4,0(a5)
+	li	a5,437272576
+	li	a4,541065216
+	sw	a4,0(a5)
+	call	int_enable
+	li	a5,437268480
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,437268480
+	sw	zero,0(a5)
+	li	a5,437268480
+	addi	a5,a5,8
+	li	a4,1048576
+	addi	a4,a4,-1
+	sw	a4,0(a5)
+	nop
+	lw	ra,12(sp)
+	lw	s0,8(sp)
+	addi	sp,sp,16
+	jr	ra
+	.size	configure, .-configure
+	.align	1
+	.globl	ISR_TA_OVF
+	.type	ISR_TA_OVF, @function
+ISR_TA_OVF:
+	addi	sp,sp,-16
+	sw	ra,12(sp)
+	sw	s0,8(sp)
+	addi	s0,sp,16
 	lui	a5,%hi(led_num)
 	lw	a4,%lo(led_num)(a5)
 	li	a5,4
-	bgt	a4,a5,.L5
+	bgt	a4,a5,.L4
 	lui	a5,%hi(led_num)
 	lw	a5,%lo(led_num)(a5)
 	addi	a4,a5,1
 	lui	a5,%hi(led_num)
 	sw	a4,%lo(led_num)(a5)
-	j	.L7
-.L5:
+	j	.L5
+.L4:
 	lui	a5,%hi(led_num)
 	sw	zero,%lo(led_num)(a5)
-.L7:
+.L5:
+	lui	a5,%hi(led_num)
+	lw	a5,%lo(led_num)(a5)
+	li	a1,1
+	mv	a0,a5
+	call	set_gpio_pin_value
 	nop
-	lw	s0,12(sp)
+	lw	ra,12(sp)
+	lw	s0,8(sp)
 	addi	sp,sp,16
 	jr	ra
-	.size	ISR_TA_CMP, .-ISR_TA_CMP
+	.size	ISR_TA_OVF, .-ISR_TA_OVF
+	.align	1
+	.globl	ISR_TB_OVF
+	.type	ISR_TB_OVF, @function
+ISR_TB_OVF:
+	addi	sp,sp,-16
+	sw	ra,12(sp)
+	sw	s0,8(sp)
+	addi	s0,sp,16
+	lui	a5,%hi(led_num)
+	lw	a4,%lo(led_num)(a5)
+	li	a5,4
+	bgt	a4,a5,.L7
+	lui	a5,%hi(led_num)
+	lw	a5,%lo(led_num)(a5)
+	addi	a4,a5,1
+	lui	a5,%hi(led_num)
+	sw	a4,%lo(led_num)(a5)
+	j	.L8
+.L7:
+	lui	a5,%hi(led_num)
+	sw	zero,%lo(led_num)(a5)
+.L8:
+	lui	a5,%hi(led_num)
+	lw	a5,%lo(led_num)(a5)
+	li	a1,1
+	mv	a0,a5
+	call	set_gpio_pin_value
+	nop
+	lw	ra,12(sp)
+	lw	s0,8(sp)
+	addi	sp,sp,16
+	jr	ra
+	.size	ISR_TB_OVF, .-ISR_TB_OVF
 	.align	1
 	.globl	main
 	.type	main, @function
@@ -129,51 +145,48 @@ main:
 	sw	s0,24(sp)
 	addi	s0,sp,32
 	sw	zero,-20(s0)
-	sw	zero,-24(s0)
-	j	.L9
-.L10:
+	j	.L10
+.L11:
 	li	a1,1
-	lw	a0,-24(s0)
+	lw	a0,-20(s0)
 	call	set_gpio_pin_direction
 	li	a1,0
-	lw	a0,-24(s0)
-	call	set_gpio_pin_value
-	lw	a5,-24(s0)
-	addi	a5,a5,1
-	sw	a5,-24(s0)
-.L9:
-	lw	a4,-24(s0)
-	li	a5,4
-	ble	a4,a5,.L10
-	li	a5,437268480
-	addi	a5,a5,8
-	li	a4,128
-	sw	a4,0(a5)
-	call	int_enable
-	call	reset_timer
-	call	start_timer
-	j	.L11
-.L12:
-	lui	a5,%hi(led_num)
-	lw	a5,%lo(led_num)(a5)
-	li	a1,1
-	mv	a0,a5
+	lw	a0,-20(s0)
 	call	set_gpio_pin_value
 	lw	a5,-20(s0)
 	addi	a5,a5,1
 	sw	a5,-20(s0)
-	call	sleep
-.L11:
+.L10:
 	lw	a4,-20(s0)
 	li	a5,4
-	ble	a4,a5,.L12
-	call	int_disable
-	call	stop_timer
-	li	a5,0
-	mv	a0,a5
-	lw	ra,28(sp)
-	lw	s0,24(sp)
-	addi	sp,sp,32
-	jr	ra
+	ble	a4,a5,.L11
+	call	int_enable
+	call	reset_timer
+	call	start_timer
+	li	a1,1
+	li	a0,3
+	call	set_gpio_pin_value
+	call	configure
+	li	a1,1
+	li	a0,4
+	call	set_gpio_pin_value
+	sw	zero,-24(s0)
+.L14:
+	sw	zero,-24(s0)
+	li	a1,1
+	li	a0,6
+	call	set_gpio_pin_value
+	lw	a5,-24(s0)
+	bne	a5,zero,.L12
+	li	a5,1
+	sw	a5,-24(s0)
+	j	.L13
+.L12:
+	sw	zero,-24(s0)
+.L13:
+	lw	a1,-24(s0)
+	li	a0,5
+	call	set_gpio_pin_value
+	j	.L14
 	.size	main, .-main
 	.ident	"GCC: (GNU) 10.2.0"

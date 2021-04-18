@@ -1,4 +1,5 @@
-/*#include "sram.h"
+/*
+#include "sram.h"
 #include "stdlib.h"
 #include "gpio.h"
 #include "uart.h"
@@ -59,7 +60,7 @@ void main()
     // #endif
  	}
 
-	/* divide sys clock by 4 
+	//divide sys clock by 4 
 	*(volatile int*) (SPI_REG_CLKDIV) = 0x4;
 
 	// if (check_spi_flash()) {
@@ -199,32 +200,33 @@ void ISR_SRAM (void)
 		}
 		reset_ssram();//reset ssram model,write tbl
 	}
-}*/
+}
 
-// #include "stdlib.h"
-// #include "gpio.h"
-// // #include "uart.h"
+#include "stdlib.h"
+#include "gpio.h"
+#include "uart.h"
 
-// void main()
-// {
+void main()
+{
 	
-// 	for(int i = 0; i < 8; i++)
-// 	{
-// 		set_gpio_pin_direction(i, 1);
-// 		set_gpio_pin_value(i, 1);
-// 	}
+	for(int i = 0; i < 8; i++)
+	{
+		set_gpio_pin_direction(i, 1);
+		set_gpio_pin_value(i, 1);
+	}
 
-// 	//uart_set_cfg(0, 77);  //Core clock 12MHz, baud rate 9600 bps
+	//uart_set_cfg(0, 77);  //Core clock 12MHz, baud rate 9600 bps
 	
-// 	unsigned int j = 0;
+	unsigned int j = 0;
 	
-// 	while(1)
-// 	{
-// 		set_gpio_pin_value((j - 1) & 0x07, 1);
-// 		set_gpio_pin_value(j & 0x07, 0);
-// 		for(int i = 0; i < 1000000; ++i);
-// 		j++;
-// 	}
+	while(1)
+	{
+		set_gpio_pin_value((j - 1) & 0x07, 1);
+		set_gpio_pin_value(j & 0x07, 0);
+		for(int i = 0; i < 1000000; ++i);
+		j++;
+	}
 	
 	
-// }
+}
+*/
