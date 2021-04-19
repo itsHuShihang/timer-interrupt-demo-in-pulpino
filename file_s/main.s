@@ -163,18 +163,12 @@ main:
 	call	int_enable
 	call	reset_timer
 	call	start_timer
-	li	a1,1
-	li	a0,3
-	call	set_gpio_pin_value
 	call	configure
-	li	a1,1
-	li	a0,4
-	call	set_gpio_pin_value
 	sw	zero,-24(s0)
 .L14:
 	sw	zero,-24(s0)
 	li	a1,1
-	li	a0,6
+	li	a0,1
 	call	set_gpio_pin_value
 	lw	a5,-24(s0)
 	bne	a5,zero,.L12

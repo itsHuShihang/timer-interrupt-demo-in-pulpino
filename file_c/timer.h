@@ -48,13 +48,13 @@
 /** timer A output compare register */
 #define TOCRA __PT__(TIMERA_OUPUT_CMP)
 
-/** timer A register - contains the actual cycle counter */
+/** timer B register - contains the actual cycle counter */
 #define TIRB __PT__(TIMERB_ADDR)
 
-/** timer A control register */
+/** timer B control register */
 #define TPRB __PT__(TIMERB_CTRL)
 
-/** timer A output compare register */
+/** timer B output compare register */
 #define TOCRB __PT__(TIMERB_OUPUT_CMP)
 
 
