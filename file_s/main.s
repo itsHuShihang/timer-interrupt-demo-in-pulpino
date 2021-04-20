@@ -5,6 +5,26 @@
 	.attribute stack_align, 16
 	.text
 	.align	1
+	.type	sleep, @function
+sleep:
+	addi	sp,sp,-16
+	sw	s0,12(sp)
+	addi	s0,sp,16
+	li	a5,437272576
+	addi	a5,a5,32
+	li	a4,1
+	sw	a4,0(a5)
+ #APP
+# 70 "./file_c/utils.h" 1
+	nop;nop;wfi
+# 0 "" 2
+ #NO_APP
+	nop
+	lw	s0,12(sp)
+	addi	sp,sp,16
+	jr	ra
+	.size	sleep, .-sleep
+	.align	1
 	.type	int_enable, @function
 int_enable:
 	addi	sp,sp,-32
@@ -50,8 +70,8 @@ configure:
 	li	a4,1
 	sw	a4,%lo(led_num_cmp)(a5)
 	sw	zero,-20(s0)
-	j	.L3
-.L4:
+	j	.L4
+.L5:
 	li	a1,1
 	lw	a0,-20(s0)
 	call	set_gpio_pin_direction
@@ -61,10 +81,10 @@ configure:
 	lw	a5,-20(s0)
 	addi	a5,a5,1
 	sw	a5,-20(s0)
-.L3:
+.L4:
 	lw	a4,-20(s0)
 	li	a5,7
-	ble	a4,a5,.L4
+	ble	a4,a5,.L5
 	li	a5,437272576
 	addi	a5,a5,28
 	li	a4,-1
@@ -139,7 +159,8 @@ main:
 	sw	s0,8(sp)
 	addi	s0,sp,16
 	call	configure
-.L7:
-	j	.L7
+.L8:
+	call	sleep
+	j	.L8
 	.size	main, .-main
 	.ident	"GCC: (GNU) 10.2.0"
