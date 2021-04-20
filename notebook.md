@@ -1,7 +1,2 @@
-## Interrupt
-use`void int_enable()` and `void int_disable()`to enable and disable the global interrupt
-
-mstatus register: 第7位是PIE，第3位是IE。异常开始时，将IE的值传入PIE，当执行到`mret`指令时，将PIE的值写回IE。IE=1'b1时中断允许。
-
-## Flow
-使用`timer.c`文件中的函数控制计时器，在计时器溢出或者达到给定值的时候进入`ISR_TA_OVF()`或者`ISR_TA_OVF()`函数进行中断处理。
+## Simple flow of timer interrupt handling
+When a timer overflow or a timer compare interrupt is triggered, `apb_timer` will output an *timer_irq* signal. This signal will be transmitted to `apb_event_unit`, port event_i and irq_i. In `apb_event_unit`, irq and event signals will be calculated and output an *irq_o* signal. Then, this irq signal will be transmitted to `core_region` unit and tranlated to an interrupt vector, called *irq_id*. And this vector will be sent to `zeroriscy_controller `together with *irq_o*. The priorities of interrupts and events will be judged in this unit and the the interrupt signals will be stored in registers. The values in these registers will control the action of the processor.
