@@ -30,12 +30,12 @@ int_enable:
 	addi	sp,sp,32
 	jr	ra
 	.size	int_enable, .-int_enable
-	.globl	led_num
+	.globl	led_num_cmp
 	.section	.sbss,"aw",@nobits
 	.align	2
-	.type	led_num, @object
-	.size	led_num, 4
-led_num:
+	.type	led_num_cmp, @object
+	.size	led_num_cmp, 4
+led_num_cmp:
 	.zero	4
 	.text
 	.align	1
@@ -46,8 +46,9 @@ configure:
 	sw	ra,28(sp)
 	sw	s0,24(sp)
 	addi	s0,sp,32
-	lui	a5,%hi(led_num)
-	sw	zero,%lo(led_num)(a5)
+	lui	a5,%hi(led_num_cmp)
+	li	a4,1
+	sw	a4,%lo(led_num_cmp)(a5)
 	sw	zero,-20(s0)
 	j	.L3
 .L4:
@@ -73,19 +74,13 @@ configure:
 	li	a4,-1
 	sw	a4,0(a5)
 	li	a5,437272576
-	li	a4,805306368
+	li	a4,536870912
 	sw	a4,0(a5)
 	call	int_enable
-	li	a5,437268480
-	sw	zero,0(a5)
 	li	a5,437268480
 	addi	a5,a5,8
 	li	a4,16777216
 	addi	a4,a4,-1
-	sw	a4,0(a5)
-	li	a5,437268480
-	addi	a5,a5,4
-	li	a4,1
 	sw	a4,0(a5)
 	call	reset_timer
 	call	start_timer
@@ -96,41 +91,6 @@ configure:
 	jr	ra
 	.size	configure, .-configure
 	.align	1
-	.globl	ISR_TA_OVF
-	.type	ISR_TA_OVF, @function
-ISR_TA_OVF:
-	addi	sp,sp,-16
-	sw	ra,12(sp)
-	sw	s0,8(sp)
-	addi	s0,sp,16
-	li	a1,1
-	li	a0,0
-	call	set_gpio_pin_value
-	li	a5,437272576
-	addi	a5,a5,12
-	li	a4,805306368
-	sw	a4,0(a5)
-	lui	a5,%hi(led_num)
-	lw	a4,%lo(led_num)(a5)
-	li	a5,7
-	bgtu	a4,a5,.L6
-	lui	a5,%hi(led_num)
-	lw	a5,%lo(led_num)(a5)
-	addi	a4,a5,1
-	lui	a5,%hi(led_num)
-	sw	a4,%lo(led_num)(a5)
-	j	.L8
-.L6:
-	lui	a5,%hi(led_num)
-	sw	zero,%lo(led_num)(a5)
-.L8:
-	nop
-	lw	ra,12(sp)
-	lw	s0,8(sp)
-	addi	sp,sp,16
-	jr	ra
-	.size	ISR_TA_OVF, .-ISR_TA_OVF
-	.align	1
 	.globl	ISR_TA_CMP
 	.type	ISR_TA_CMP, @function
 ISR_TA_CMP:
@@ -138,29 +98,32 @@ ISR_TA_CMP:
 	sw	ra,12(sp)
 	sw	s0,8(sp)
 	addi	s0,sp,16
-	lui	a5,%hi(led_num)
-	lw	a5,%lo(led_num)(a5)
+	li	a5,437272576
+	addi	a5,a5,12
+	li	a4,536870912
+	sw	a4,0(a5)
+	lui	a5,%hi(led_num_cmp)
+	lw	a4,%lo(led_num_cmp)(a5)
+	li	a5,9
+	remu	a4,a4,a5
+	lui	a5,%hi(led_num_cmp)
+	sw	a4,%lo(led_num_cmp)(a5)
+	lui	a5,%hi(led_num_cmp)
+	lw	a5,%lo(led_num_cmp)(a5)
+	addi	a5,a5,-1
+	li	a1,0
+	mv	a0,a5
+	call	set_gpio_pin_value
+	lui	a5,%hi(led_num_cmp)
+	lw	a5,%lo(led_num_cmp)(a5)
 	li	a1,1
 	mv	a0,a5
 	call	set_gpio_pin_value
-	li	a5,437272576
-	addi	a5,a5,12
-	li	a4,805306368
-	sw	a4,0(a5)
-	lui	a5,%hi(led_num)
-	lw	a4,%lo(led_num)(a5)
-	li	a5,7
-	bgtu	a4,a5,.L10
-	lui	a5,%hi(led_num)
-	lw	a5,%lo(led_num)(a5)
+	lui	a5,%hi(led_num_cmp)
+	lw	a5,%lo(led_num_cmp)(a5)
 	addi	a4,a5,1
-	lui	a5,%hi(led_num)
-	sw	a4,%lo(led_num)(a5)
-	j	.L12
-.L10:
-	lui	a5,%hi(led_num)
-	sw	zero,%lo(led_num)(a5)
-.L12:
+	lui	a5,%hi(led_num_cmp)
+	sw	a4,%lo(led_num_cmp)(a5)
 	nop
 	lw	ra,12(sp)
 	lw	s0,8(sp)
@@ -176,7 +139,7 @@ main:
 	sw	s0,8(sp)
 	addi	s0,sp,16
 	call	configure
-.L14:
-	j	.L14
+.L7:
+	j	.L7
 	.size	main, .-main
 	.ident	"GCC: (GNU) 10.2.0"
